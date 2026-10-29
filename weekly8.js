@@ -43,25 +43,8 @@ controls.dampingFactor = 0.05;
 controls.target.set(0, 3, -2);
 
 
-// ----------------------------------------------------
-// TEXTURING EXAMPLE (uncomment and adapt)
-// ----------------------------------------------------
 const loader = new THREE.TextureLoader();
 
-const groundColor = loader.load("textures/ground/color.jpg");
-const groundNormal = loader.load("textures/ground/normal.jpg");
-const groundRoughness = loader.load("textures/ground/roughness.jpg");
-
-// ====================================================
-// MATERIALS  (one per group -> texture these)
-// ====================================================
-const groundMaterial = new THREE.MeshStandardMaterial({ 
-    map: groundColor, 
-    normalMap: groundNormal, 
-    roughnessMap: groundRoughness
- }); // stone floor
-
-const wallMaterial   = new THREE.MeshStandardMaterial({ color: 0x8f8a80 }); // walls, towers, well
 const roofMaterial   = new THREE.MeshStandardMaterial({ color: 0x5a3a38 }); // tower roofs
 const gateMaterial   = new THREE.MeshStandardMaterial({ color: 0x5b3b22 }); // gate, beams, posts
 const crateMaterial  = new THREE.MeshStandardMaterial({ color: 0x9a7142 }); // crates
@@ -75,6 +58,27 @@ const waterMaterial  = new THREE.MeshStandardMaterial({ color: 0x2f6f8f, roughne
 // ====================================================
 // GROUND
 // ====================================================
+
+const groundColor = loader.load("textures/stone/multicolored_pebble_floor_diff_1k.png");
+const groundNormal = loader.load("textures/stone/multicolored_pebble_floor_nor_gl_1k.png");
+const groundRoughness = loader.load("textures/stone/multicolored_pebble_floor_rough_1k.png");
+
+[
+    groundColor,
+    groundNormal,
+    groundRoughness
+].forEach(texture => {
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(10, 10);
+});
+
+const groundMaterial = new THREE.MeshStandardMaterial({ 
+    map: groundColor, 
+    normalMap: groundNormal, 
+    roughnessMap: groundRoughness
+ }); // stone floor
+
 const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(100, 100),
     groundMaterial
@@ -85,6 +89,10 @@ scene.add(ground);
 // ====================================================
 // WALLS  (wallMaterial)
 // ====================================================
+
+const wallMaterial = new THREE.MeshStandardMaterial({ 
+    color: 0x8f8a80 
+}); // walls, towers, well
 
 // Back wall
 const backWall = new THREE.Mesh(
