@@ -40,51 +40,286 @@ const controls = new OrbitControls(
 
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
+controls.target.set(0, 3, -2);
+
 
 // ----------------------------------------------------
-// Ground Plane
+// TEXTURING EXAMPLE (uncomment and adapt)
 // ----------------------------------------------------
-const groundGeometry = new THREE.PlaneGeometry(100, 100);
+const loader = new THREE.TextureLoader();
 
-const groundMaterial = new THREE.MeshStandardMaterial({
-    color: 0x66aa66
-});
+const groundColor = loader.load("textures/ground/color.jpg");
+const groundNormal = loader.load("textures/ground/normal.jpg");
+const groundRoughness = loader.load("textures/ground/roughness.jpg");
 
+// ====================================================
+// MATERIALS  (one per group -> texture these)
+// ====================================================
+const groundMaterial = new THREE.MeshStandardMaterial({ 
+    map: groundColor, 
+    normalMap: groundNormal, 
+    roughnessMap: groundRoughness
+ }); // stone floor
+
+const wallMaterial   = new THREE.MeshStandardMaterial({ color: 0x8f8a80 }); // walls, towers, well
+const roofMaterial   = new THREE.MeshStandardMaterial({ color: 0x5a3a38 }); // tower roofs
+const gateMaterial   = new THREE.MeshStandardMaterial({ color: 0x5b3b22 }); // gate, beams, posts
+const crateMaterial  = new THREE.MeshStandardMaterial({ color: 0x9a7142 }); // crates
+const barrelMaterial = new THREE.MeshStandardMaterial({ color: 0x7a5230 }); // barrels
+const metalMaterial  = new THREE.MeshStandardMaterial({ color: 0x3a3a3e, metalness: 1, roughness: 0.4 }); // bands, hoops
+const bannerMaterial = new THREE.MeshStandardMaterial({ color: 0x9b1f2a, side: THREE.DoubleSide });       // banners
+const rockMaterial   = new THREE.MeshStandardMaterial({ color: 0x6f6c66 }); // rocks
+const flameMaterial  = new THREE.MeshStandardMaterial({ color: 0xff8a2a, emissive: 0xff6a10, emissiveIntensity: 2 }); // torches
+const waterMaterial  = new THREE.MeshStandardMaterial({ color: 0x2f6f8f, roughness: 0.1 }); // well water
+
+// ====================================================
+// GROUND
+// ====================================================
 const ground = new THREE.Mesh(
-    groundGeometry,
+    new THREE.PlaneGeometry(100, 100),
     groundMaterial
 );
-
 ground.rotation.x = -Math.PI / 2;
-ground.receiveShadow = true;
-
 scene.add(ground);
 
-// ----------------------------------------------------
-// Example Cube
-// ----------------------------------------------------
-const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+// ====================================================
+// WALLS  (wallMaterial)
+// ====================================================
 
-const cubeMaterial = new THREE.MeshStandardMaterial({
-    color: 0x3366ff
-});
-
-const cube = new THREE.Mesh(
-    cubeGeometry,
-    cubeMaterial
+// Back wall
+const backWall = new THREE.Mesh(
+    new THREE.BoxGeometry(30, 8, 1.5),
+    wallMaterial
 );
+backWall.position.set(0, 4, -12);
+scene.add(backWall);
 
-cube.position.y = 2;
-cube.castShadow = true;
+// Side walls
+const leftWall = new THREE.Mesh(
+    new THREE.BoxGeometry(1.5, 8, 25),
+    wallMaterial
+);
+leftWall.position.set(-14.25, 4, 1.4);
+scene.add(leftWall);
 
-scene.add(cube);
+const rightWall = new THREE.Mesh(
+    new THREE.BoxGeometry(1.5, 8, 25),
+    wallMaterial
+);
+rightWall.position.set(14.25, 4, 1.4);
+scene.add(rightWall);
+
+// Crenellations along the top of the back wall
+for (let x = -14; x <= 14; x += 4) {
+    const merlon = new THREE.Mesh(
+        new THREE.BoxGeometry(2, 1.2, 1.5),
+        wallMaterial
+    );
+    merlon.position.set(x, 8.6, -12);
+    scene.add(merlon);
+}
+
+// ====================================================
+// TOWERS  (wallMaterial + roofMaterial)
+// ====================================================
+for (const x of [-15, 15]) {
+    const tower = new THREE.Mesh(
+        new THREE.CylinderGeometry(2.6, 2.6, 11, 24),
+        wallMaterial
+    );
+    tower.position.set(x, 5.5, -12);
+    scene.add(tower);
+
+    const roof = new THREE.Mesh(
+        new THREE.ConeGeometry(3.4, 4.5, 24),
+        roofMaterial
+    );
+    roof.position.set(x, 13.25, -12);
+    scene.add(roof);
+}
+
+// ====================================================
+// GATE  (gateMaterial + metalMaterial)
+// ====================================================
+const gate = new THREE.Mesh(
+    new THREE.BoxGeometry(4, 5, 0.4),
+    gateMaterial
+);
+gate.position.set(0, 2.5, -11.05);
+scene.add(gate);
+
+// Iron bands
+for (const y of [1, 4]) {
+    const band = new THREE.Mesh(
+        new THREE.BoxGeometry(4.1, 0.25, 0.1),
+        metalMaterial
+    );
+    band.position.set(0, y, -10.8);
+    scene.add(band);
+}
+
+// ====================================================
+// BANNERS  (bannerMaterial + gateMaterial for the rod)
+// ====================================================
+for (const x of [-6.5, 6.5]) {
+    const banner = new THREE.Mesh(
+        new THREE.PlaneGeometry(2, 4),
+        bannerMaterial
+    );
+    banner.position.set(x, 5, -11.2);
+    scene.add(banner);
+
+    const rod = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.08, 2.4, 12),
+        gateMaterial
+    );
+    rod.rotation.z = Math.PI / 2;
+    rod.position.set(x, 7.1, -11.15);
+    scene.add(rod);
+}
+
+// ====================================================
+// TORCHES  (gateMaterial stick + flameMaterial emissive flame)
+// ====================================================
+for (const x of [-3.5, 3.5]) {
+    const stick = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.08, 1, 10),
+        gateMaterial
+    );
+    stick.position.set(x, 3.5, -11);
+    scene.add(stick);
+
+    const flame = new THREE.Mesh(
+        new THREE.SphereGeometry(0.22, 12, 12),
+        flameMaterial
+    );
+    flame.position.set(x, 4.2, -11);
+    scene.add(flame);
+
+    const torchLight = new THREE.PointLight(0xff8a3a, 20, 14);
+    torchLight.position.set(x, 4.3, -10.7);
+    scene.add(torchLight);
+}
+
+// ====================================================
+// CRATES  (crateMaterial)
+// ====================================================
+const cratePositions = [
+    [-10.5, 0.7, -9.5],
+    [-8.5, 0.6, -9.8],
+    [-9.8, 1.9, -9.6],   // stacked on top
+    [11.2, 0.65, 6],
+    [9.6, 0.5, 6.8]
+];
+
+for (const [x, y, z] of cratePositions) {
+    const size = y * 2;
+    const crate = new THREE.Mesh(
+        new THREE.BoxGeometry(size, size, size),
+        crateMaterial
+    );
+    crate.position.set(x, y, z);
+    scene.add(crate);
+}
+
+// ====================================================
+// BARRELS  (barrelMaterial + metalMaterial for hoops)
+// ====================================================
+const barrelPositions = [
+    [-12, -6],
+    [-11, -4.8],
+    [12, -9.5],
+    [10.6, -10.4],
+    [12.3, 8.5]
+];
+
+for (const [x, z] of barrelPositions) {
+    const barrel = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.55, 0.55, 1.3, 20),
+        barrelMaterial
+    );
+    barrel.position.set(x, 0.65, z);
+    scene.add(barrel);
+
+    for (const y of [0.3, 1.0]) {
+        const hoop = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.58, 0.58, 0.08, 20),
+            metalMaterial
+        );
+        hoop.position.set(x, y, z);
+        scene.add(hoop);
+    }
+}
+
+// ====================================================
+// WELL  (wallMaterial + waterMaterial + gateMaterial)
+// ====================================================
+const wellBase = new THREE.Mesh(
+    new THREE.CylinderGeometry(1.3, 1.3, 1.1, 24),
+    wallMaterial
+);
+wellBase.position.set(6.5, 0.55, 1.5);
+scene.add(wellBase);
+
+const water = new THREE.Mesh(
+    new THREE.CylinderGeometry(1, 1, 0.05, 24),
+    waterMaterial
+);
+water.position.set(6.5, 1.12, 1.5);
+scene.add(water);
+
+for (const dx of [-1.1, 1.1]) {
+    const post = new THREE.Mesh(
+        new THREE.BoxGeometry(0.2, 2.5, 0.2),
+        gateMaterial
+    );
+    post.position.set(6.5 + dx, 2.3, 1.5);
+    scene.add(post);
+}
+
+const beam = new THREE.Mesh(
+    new THREE.BoxGeometry(2.8, 0.2, 0.2),
+    gateMaterial
+);
+beam.position.set(6.5, 3.5, 1.5);
+scene.add(beam);
+
+// ====================================================
+// ROCKS  (rockMaterial)
+// ====================================================
+const rockData = [
+    [-12, 2, 0.9],
+    [-11, 3.4, 0.5],
+    [12.5, -3, 0.8],
+    [-3.5, 9, 0.4]
+];
+
+for (const [x, z, s] of rockData) {
+    const rock = new THREE.Mesh(
+        new THREE.DodecahedronGeometry(1),
+        rockMaterial
+    );
+    rock.scale.set(s, s * 0.7, s);
+    rock.position.set(x, s * 0.5, z);
+    scene.add(rock);
+}
+
+// ----------------------------------------------------
+// Shadows: every mesh casts and receives
+// ----------------------------------------------------
+scene.traverse((obj) => {
+    if (obj.isMesh) {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+    }
+});
 
 // ----------------------------------------------------
 // Ambient Light
 // ----------------------------------------------------
 const ambientLight = new THREE.AmbientLight(
     0xffffff,
-    1
+    0.6
 );
 
 scene.add(ambientLight);
@@ -99,6 +334,13 @@ const directionalLight = new THREE.DirectionalLight(
 
 directionalLight.position.set(20, 30, 10);
 directionalLight.castShadow = true;
+
+// widen the shadow area so the whole courtyard is covered
+directionalLight.shadow.camera.left = -35;
+directionalLight.shadow.camera.right = 35;
+directionalLight.shadow.camera.top = 35;
+directionalLight.shadow.camera.bottom = -35;
+directionalLight.shadow.mapSize.set(2048, 2048);
 
 scene.add(directionalLight);
 
@@ -139,8 +381,6 @@ window.addEventListener("resize", () => {
 function animate() {
 
     requestAnimationFrame(animate);
-
-    cube.rotation.y += 0.01;
 
     controls.update();
 
