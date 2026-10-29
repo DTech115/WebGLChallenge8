@@ -47,7 +47,6 @@ const loader = new THREE.TextureLoader();
 
 const crateMaterial  = new THREE.MeshStandardMaterial({ color: 0x9a7142 }); // crates
 const barrelMaterial = new THREE.MeshStandardMaterial({ color: 0x7a5230 }); // barrels
-const bannerMaterial = new THREE.MeshStandardMaterial({ color: 0x9b1f2a, side: THREE.DoubleSide });       // banners
 const rockMaterial   = new THREE.MeshStandardMaterial({ color: 0x6f6c66 }); // rocks
 const flameMaterial  = new THREE.MeshStandardMaterial({ color: 0xff8a2a, emissive: 0xff6a10, emissiveIntensity: 2 }); // torches
 const waterMaterial  = new THREE.MeshStandardMaterial({ color: 0x2f6f8f, roughness: 0.1 }); // well water
@@ -218,6 +217,18 @@ for (const y of [1, 4]) {
 // ====================================================
 // BANNERS  (bannerMaterial + gateMaterial for the rod)
 // ====================================================
+
+const bannerColor = loader.load("textures/fabric/quatrefoil_jacquard_fabric_diff_1k.png");
+// const bannerNormal = loader.load("textures/fabric/quatrefoil_jacquard_fabric_nor_gl_1k.png");
+// const bannerRoughness = loader.load("textures/fabric/quatrefoil_jacquard_fabric_rough_1k.png");
+
+const bannerMaterial = new THREE.MeshStandardMaterial({ 
+    map: bannerColor,
+    // normalMap: bannerNormal,
+    // roughnessMap: bannerRoughness,
+    side: THREE.DoubleSide 
+});       // banners
+
 for (const x of [-6.5, 6.5]) {
     const banner = new THREE.Mesh(
         new THREE.PlaneGeometry(2, 4),
