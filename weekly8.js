@@ -45,10 +45,7 @@ controls.target.set(0, 3, -2);
 
 const loader = new THREE.TextureLoader();
 
-const crateMaterial  = new THREE.MeshStandardMaterial({ color: 0x9a7142 }); // crates
-const barrelMaterial = new THREE.MeshStandardMaterial({ color: 0x7a5230 }); // barrels
 const rockMaterial   = new THREE.MeshStandardMaterial({ color: 0x6f6c66 }); // rocks
-const flameMaterial  = new THREE.MeshStandardMaterial({ color: 0xff8a2a, emissive: 0xff6a10, emissiveIntensity: 2 }); // torches
 const waterMaterial  = new THREE.MeshStandardMaterial({ color: 0x2f6f8f, roughness: 0.1 }); // well water
 
 // ====================================================
@@ -249,6 +246,7 @@ for (const x of [-6.5, 6.5]) {
 // ====================================================
 // TORCHES  (gateMaterial stick + flameMaterial emissive flame)
 // ====================================================
+const flameMaterial  = new THREE.MeshStandardMaterial({ color: 0xff8a2a, emissive: 0xff6a10, emissiveIntensity: 2 }); // torches
 for (const x of [-3.5, 3.5]) {
     const stick = new THREE.Mesh(
         new THREE.CylinderGeometry(0.08, 0.08, 1, 10),
@@ -272,6 +270,17 @@ for (const x of [-3.5, 3.5]) {
 // ====================================================
 // CRATES  (crateMaterial)
 // ====================================================
+const crateColor = loader.load("textures/wood/wooden_barrel_diff_1k.png");
+const crateNormal = loader.load("textures/wood/wooden_barrel_nor_gl_1k.png");
+const crateRoughness = loader.load("textures/wood/wooden_barrel_rough_1k.png");
+
+const crateMaterial  = new THREE.MeshStandardMaterial({ 
+    map: crateColor,
+    color: 0xfce5c9
+    // normalMap: crateNormal,
+    // roughnessMap: crateRoughness
+}); // crates
+
 const cratePositions = [
     [-10.5, 0.7, -9.5],
     [-8.5, 0.6, -9.8],
@@ -291,8 +300,9 @@ for (const [x, y, z] of cratePositions) {
 }
 
 // ====================================================
-// BARRELS  (barrelMaterial + metalMaterial for hoops)
+// BARRELS  (crateMaterial + metalMaterial for hoops)
 // ====================================================
+
 const barrelPositions = [
     [-12, -6],
     [-11, -4.8],
@@ -304,7 +314,7 @@ const barrelPositions = [
 for (const [x, z] of barrelPositions) {
     const barrel = new THREE.Mesh(
         new THREE.CylinderGeometry(0.55, 0.55, 1.3, 20),
-        barrelMaterial
+        crateMaterial,
     );
     barrel.position.set(x, 0.65, z);
     scene.add(barrel);
