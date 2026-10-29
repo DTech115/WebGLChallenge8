@@ -45,7 +45,6 @@ controls.target.set(0, 3, -2);
 
 const loader = new THREE.TextureLoader();
 
-const roofMaterial   = new THREE.MeshStandardMaterial({ color: 0x5a3a38 }); // tower roofs
 const gateMaterial   = new THREE.MeshStandardMaterial({ color: 0x5b3b22 }); // gate, beams, posts
 const crateMaterial  = new THREE.MeshStandardMaterial({ color: 0x9a7142 }); // crates
 const barrelMaterial = new THREE.MeshStandardMaterial({ color: 0x7a5230 }); // barrels
@@ -90,9 +89,25 @@ scene.add(ground);
 // WALLS  (wallMaterial)
 // ====================================================
 
+const wallColor = loader.load("textures/stone/stone_wall_04_diff_1k.png");
+const wallNormal = loader.load("textures/stone/stone_wall_04_nor_gl_1k.png");
+const wallRoughness = loader.load("textures/stone/stone_wall_04_rough_1k.png");
+[
+    wallColor
+    // wallNormal,
+    // wallRoughness
+].forEach(texture => {
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(2, 2);
+});
+
 const wallMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x8f8a80 
+    map: wallColor,
+    // normalMap: wallNormal,
+    // roughnessMap: wallRoughness
 }); // walls, towers, well
+
 
 // Back wall
 const backWall = new THREE.Mesh(
@@ -130,6 +145,17 @@ for (let x = -14; x <= 14; x += 4) {
 // ====================================================
 // TOWERS  (wallMaterial + roofMaterial)
 // ====================================================
+
+const roofColor = loader.load("textures/stone/stacked_brick_wall_diff_1k.png");
+// const roofNormal = loader.load("textures/stone/stacked_brick_wall_nor_gl_1k.png");
+// const roofRoughness = loader.load("textures/stone/stacked_brick_wall_rough_1k.png");
+
+const roofMaterial = new THREE.MeshStandardMaterial({ 
+    map: roofColor,
+    // normalMap: roofNormal,
+    // roughnessMap: roofRoughness
+}); // tower roofs
+
 for (const x of [-15, 15]) {
     const tower = new THREE.Mesh(
         new THREE.CylinderGeometry(2.6, 2.6, 11, 24),
@@ -326,7 +352,7 @@ scene.traverse((obj) => {
 // Ambient Light
 // ----------------------------------------------------
 const ambientLight = new THREE.AmbientLight(
-    0xffffff,
+    0xffd9d4,
     0.6
 );
 
