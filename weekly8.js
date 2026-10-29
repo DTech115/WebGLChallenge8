@@ -45,10 +45,8 @@ controls.target.set(0, 3, -2);
 
 const loader = new THREE.TextureLoader();
 
-const gateMaterial   = new THREE.MeshStandardMaterial({ color: 0x5b3b22 }); // gate, beams, posts
 const crateMaterial  = new THREE.MeshStandardMaterial({ color: 0x9a7142 }); // crates
 const barrelMaterial = new THREE.MeshStandardMaterial({ color: 0x7a5230 }); // barrels
-const metalMaterial  = new THREE.MeshStandardMaterial({ color: 0x3a3a3e, metalness: 1, roughness: 0.4 }); // bands, hoops
 const bannerMaterial = new THREE.MeshStandardMaterial({ color: 0x9b1f2a, side: THREE.DoubleSide });       // banners
 const rockMaterial   = new THREE.MeshStandardMaterial({ color: 0x6f6c66 }); // rocks
 const flameMaterial  = new THREE.MeshStandardMaterial({ color: 0xff8a2a, emissive: 0xff6a10, emissiveIntensity: 2 }); // torches
@@ -152,6 +150,7 @@ const roofColor = loader.load("textures/stone/stacked_brick_wall_diff_1k.png");
 
 const roofMaterial = new THREE.MeshStandardMaterial({ 
     map: roofColor,
+    color: 0xffa3a3
     // normalMap: roofNormal,
     // roughnessMap: roofRoughness
 }); // tower roofs
@@ -175,6 +174,19 @@ for (const x of [-15, 15]) {
 // ====================================================
 // GATE  (gateMaterial + metalMaterial)
 // ====================================================
+
+const gateColor = loader.load("textures/wood/bark_willow_diff_1k.png");
+// const gateNormal = loader.load("textures/wood/bark_willow_nor_gl_1k.png");
+// const gateRoughness = loader.load("textures/wood/bark_willow_rough_1k.png");
+
+const gateMaterial   = new THREE.MeshStandardMaterial({ 
+    map: gateColor,
+    color: 0xcfb294
+    // normalMap: gateNormal,
+    // roughnessMap: gateRoughness
+}); // gate, beams, posts
+
+
 const gate = new THREE.Mesh(
     new THREE.BoxGeometry(4, 5, 0.4),
     gateMaterial
@@ -183,6 +195,17 @@ gate.position.set(0, 2.5, -11.05);
 scene.add(gate);
 
 // Iron bands
+
+const metalColor = loader.load("textures/metal/metal_plate_02_diff_1k.png");
+// const metalNormal = loader.load("textures/metal/metal_plate_02_nor_gl_1k.png");
+// const metalRoughness = loader.load("textures/metal/metal_plate_02_rough_1k.png");
+
+const metalMaterial = new THREE.MeshStandardMaterial({ 
+    map: metalColor,
+    // normalMap: metalNormal,
+    // roughnessMap: metalRoughness,
+    metalness: 1
+}); // bands, hoops
 for (const y of [1, 4]) {
     const band = new THREE.Mesh(
         new THREE.BoxGeometry(4.1, 0.25, 0.1),
@@ -352,7 +375,7 @@ scene.traverse((obj) => {
 // Ambient Light
 // ----------------------------------------------------
 const ambientLight = new THREE.AmbientLight(
-    0xffd9d4,
+    0xffffff,
     0.6
 );
 
