@@ -45,8 +45,6 @@ controls.target.set(0, 3, -2);
 
 const loader = new THREE.TextureLoader();
 
-const rockMaterial   = new THREE.MeshStandardMaterial({ color: 0x6f6c66 }); // rocks
-const waterMaterial  = new THREE.MeshStandardMaterial({ color: 0x2f6f8f, roughness: 0.1 }); // well water
 
 // ====================================================
 // GROUND
@@ -87,9 +85,9 @@ const wallColor = loader.load("textures/stone/stone_wall_04_diff_1k.png");
 const wallNormal = loader.load("textures/stone/stone_wall_04_nor_gl_1k.png");
 const wallRoughness = loader.load("textures/stone/stone_wall_04_rough_1k.png");
 [
-    wallColor
-    // wallNormal,
-    // wallRoughness
+    wallColor,
+    wallNormal,
+    wallRoughness
 ].forEach(texture => {
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
@@ -98,8 +96,9 @@ const wallRoughness = loader.load("textures/stone/stone_wall_04_rough_1k.png");
 
 const wallMaterial = new THREE.MeshStandardMaterial({ 
     map: wallColor,
-    // normalMap: wallNormal,
-    // roughnessMap: wallRoughness
+    color: 0xb3b3b3,
+    normalMap: wallNormal,
+    roughnessMap: wallRoughness
 }); // walls, towers, well
 
 
@@ -141,14 +140,14 @@ for (let x = -14; x <= 14; x += 4) {
 // ====================================================
 
 const roofColor = loader.load("textures/stone/stacked_brick_wall_diff_1k.png");
-// const roofNormal = loader.load("textures/stone/stacked_brick_wall_nor_gl_1k.png");
-// const roofRoughness = loader.load("textures/stone/stacked_brick_wall_rough_1k.png");
+const roofNormal = loader.load("textures/stone/stacked_brick_wall_nor_gl_1k.png");
+const roofRoughness = loader.load("textures/stone/stacked_brick_wall_rough_1k.png");
 
 const roofMaterial = new THREE.MeshStandardMaterial({ 
     map: roofColor,
-    color: 0xffa3a3
-    // normalMap: roofNormal,
-    // roughnessMap: roofRoughness
+    color: 0xffa3a3,
+    normalMap: roofNormal,
+    roughnessMap: roofRoughness
 }); // tower roofs
 
 for (const x of [-15, 15]) {
@@ -172,14 +171,14 @@ for (const x of [-15, 15]) {
 // ====================================================
 
 const gateColor = loader.load("textures/wood/bark_willow_diff_1k.png");
-// const gateNormal = loader.load("textures/wood/bark_willow_nor_gl_1k.png");
-// const gateRoughness = loader.load("textures/wood/bark_willow_rough_1k.png");
+const gateNormal = loader.load("textures/wood/bark_willow_nor_gl_1k.png");
+const gateRoughness = loader.load("textures/wood/bark_willow_rough_1k.png");
 
 const gateMaterial   = new THREE.MeshStandardMaterial({ 
     map: gateColor,
-    color: 0xcfb294
-    // normalMap: gateNormal,
-    // roughnessMap: gateRoughness
+    color: 0xcfb294,
+    normalMap: gateNormal,
+    roughnessMap: gateRoughness
 }); // gate, beams, posts
 
 
@@ -193,13 +192,13 @@ scene.add(gate);
 // Iron bands
 
 const metalColor = loader.load("textures/metal/metal_plate_02_diff_1k.png");
-// const metalNormal = loader.load("textures/metal/metal_plate_02_nor_gl_1k.png");
-// const metalRoughness = loader.load("textures/metal/metal_plate_02_rough_1k.png");
+const metalNormal = loader.load("textures/metal/metal_plate_02_nor_gl_1k.png");
+const metalRoughness = loader.load("textures/metal/metal_plate_02_rough_1k.png");
 
 const metalMaterial = new THREE.MeshStandardMaterial({ 
     map: metalColor,
-    // normalMap: metalNormal,
-    // roughnessMap: metalRoughness,
+    normalMap: metalNormal,
+    roughnessMap: metalRoughness,
     metalness: 1
 }); // bands, hoops
 for (const y of [1, 4]) {
@@ -216,13 +215,13 @@ for (const y of [1, 4]) {
 // ====================================================
 
 const bannerColor = loader.load("textures/fabric/quatrefoil_jacquard_fabric_diff_1k.png");
-// const bannerNormal = loader.load("textures/fabric/quatrefoil_jacquard_fabric_nor_gl_1k.png");
-// const bannerRoughness = loader.load("textures/fabric/quatrefoil_jacquard_fabric_rough_1k.png");
+const bannerNormal = loader.load("textures/fabric/quatrefoil_jacquard_fabric_nor_gl_1k.png");
+const bannerRoughness = loader.load("textures/fabric/quatrefoil_jacquard_fabric_rough_1k.png");
 
 const bannerMaterial = new THREE.MeshStandardMaterial({ 
     map: bannerColor,
-    // normalMap: bannerNormal,
-    // roughnessMap: bannerRoughness,
+    normalMap: bannerNormal,
+    roughnessMap: bannerRoughness,
     side: THREE.DoubleSide 
 });       // banners
 
@@ -244,7 +243,7 @@ for (const x of [-6.5, 6.5]) {
 }
 
 // ====================================================
-// TORCHES  (gateMaterial stick + flameMaterial emissive flame)
+// TORCHES  (gateMaterial stick)
 // ====================================================
 const flameMaterial  = new THREE.MeshStandardMaterial({ color: 0xff8a2a, emissive: 0xff6a10, emissiveIntensity: 2 }); // torches
 for (const x of [-3.5, 3.5]) {
@@ -276,9 +275,9 @@ const crateRoughness = loader.load("textures/wood/wooden_barrel_rough_1k.png");
 
 const crateMaterial  = new THREE.MeshStandardMaterial({ 
     map: crateColor,
-    color: 0xfce5c9
-    // normalMap: crateNormal,
-    // roughnessMap: crateRoughness
+    color: 0xfce5c9,
+    normalMap: crateNormal,
+    roughnessMap: crateRoughness
 }); // crates
 
 const cratePositions = [
@@ -339,6 +338,15 @@ const wellBase = new THREE.Mesh(
 wellBase.position.set(6.5, 0.55, 1.5);
 scene.add(wellBase);
 
+const waterColor = loader.load("textures/water/water 0342.jpg");
+const waterNormal = loader.load("textures/water/water 0342normal.jpg");
+
+const waterMaterial  = new THREE.MeshStandardMaterial({ 
+    map: waterColor,
+    normalMap: waterNormal,
+    roughness: 0.1
+}); // well water
+
 const water = new THREE.Mesh(
     new THREE.CylinderGeometry(1, 1, 0.05, 24),
     waterMaterial
@@ -365,6 +373,17 @@ scene.add(beam);
 // ====================================================
 // ROCKS  (rockMaterial)
 // ====================================================
+
+const rockColor = loader.load("textures/stone/rock_face_04_diff_1k.png");
+const rockNormal = loader.load("textures/stone/rock_face_04_nor_gl_1k.png");
+const rockRoughness = loader.load("textures/stone/rock_face_04_rough_1k.png");
+
+const rockMaterial   = new THREE.MeshStandardMaterial({ 
+    map: rockColor,
+    normalMap: rockNormal,
+    roughnessMap: rockRoughness
+}); // rocks
+
 const rockData = [
     [-12, 2, 0.9],
     [-11, 3.4, 0.5],
